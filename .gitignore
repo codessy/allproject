@@ -1,6 +1,7 @@
 # Go
 backend/bin/
 backend/.cache/
+backend/*.exe
 
 # Environment
 .env
