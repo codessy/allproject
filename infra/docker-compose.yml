@@ -1,0 +1,65 @@
+services:
+  api:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    environment:
+      APP_ENV: development
+      PORT: 8080
+      REDIS_ADDR: redis:6379
+      POSTGRES_DSN: postgres://app:app@postgres:5432/walkietalkie?sslmode=disable
+      LIVEKIT_URL: ws://localhost:7880
+      LIVEKIT_API_KEY: devkey
+      LIVEKIT_API_SECRET: devsecret
+      WS_URL: ws://localhost:8080/v1/ws
+      JWT_ISSUER: walkietalkie
+      JWT_SECRET: change-me
+    depends_on:
+      - postgres
+      - redis
+      - livekit
+    ports:
+      - "8080:8080"
+
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+      POSTGRES_DB: walkietalkie
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+  livekit:
+    image: livekit/livekit-server:latest
+    command: --dev --bind 0.0.0.0
+    ports:
+      - "7880:7880"
+      - "7881:7881"
+      - "50000-50100:50000-50100/udp"
+
+  coturn:
+    image: coturn/coturn:latest
+    command: >
+      -n
+      --log-file=stdout
+      --lt-cred-mech
+      --realm=localhost
+      --user=demo:demo
+      --listening-port=3478
+      --tls-listening-port=5349
+      --no-cli
+    ports:
+      - "3478:3478"
+      - "3478:3478/udp"
+      - "5349:5349"
+
+volumes:
+  postgres_data:

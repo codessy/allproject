@@ -1,0 +1,105 @@
+name: mobile-release
+
+on:
+  workflow_dispatch:
+    inputs:
+      flavor:
+        description: "Release flavor"
+        required: true
+        type: choice
+        options:
+          - stage
+          - prod
+      build_apk:
+        description: "Also build APK"
+        required: true
+        type: boolean
+        default: false
+      publish_internal:
+        description: "Publish AAB to Google Play internal track (requires secrets)"
+        required: true
+        type: boolean
+        default: false
+
+jobs:
+  build-android-release:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+    env:
+      KEYSTORE_PROPERTIES: ${{ secrets.MOBILE_ANDROID_KEYSTORE_PROPERTIES }}
+      KEYSTORE_BASE64: ${{ secrets.MOBILE_ANDROID_KEYSTORE_BASE64 }}
+      API_BASE_URL_STAGE: ${{ secrets.MOBILE_API_BASE_URL_STAGE }}
+      API_BASE_URL_PROD: ${{ secrets.MOBILE_API_BASE_URL_PROD }}
+      PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.MOBILE_PLAY_SERVICE_ACCOUNT_JSON }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Ensure Android platform scaffold
+        run: flutter create . --platforms=android --project-name walkietalkie_mobile
+
+      - name: Restore Android signing files
+        shell: bash
+        run: |
+          if [ -n "$KEYSTORE_PROPERTIES" ]; then
+            printf '%s' "$KEYSTORE_PROPERTIES" > android/keystore.properties
+          fi
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            mkdir -p android/keystore
+            printf '%s' "$KEYSTORE_BASE64" | base64 -d > android/keystore/upload-keystore.jks
+          fi
+
+      - name: Build release bundle
+        shell: pwsh
+        run: |
+          $flavor = "${{ github.event.inputs.flavor }}"
+          if ($flavor -eq "stage") {
+            $apiBase = "${env:API_BASE_URL_STAGE}"
+          } else {
+            $apiBase = "${env:API_BASE_URL_PROD}"
+          }
+          if ([string]::IsNullOrWhiteSpace($apiBase)) {
+            throw "Missing API base URL secret for flavor '$flavor'."
+          }
+          $buildApk = [System.Convert]::ToBoolean("${{ github.event.inputs.build_apk }}")
+          powershell -ExecutionPolicy Bypass -File .\tool\build_android_release.ps1 -Flavor $flavor -ApiBaseUrl $apiBase -BuildApk:$buildApk
+
+      - name: Upload appbundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-${{ github.event.inputs.flavor }}-aab
+          path: mobile/build/app/outputs/bundle/${{ github.event.inputs.flavor }}Release/*.aab
+
+      - name: Resolve package name
+        id: package
+        shell: bash
+        run: |
+          if [ "${{ github.event.inputs.flavor }}" = "stage" ]; then
+            echo "value=com.example.walkietalkie_mobile.stage" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=com.example.walkietalkie_mobile" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish to Google Play internal
+        if: ${{ github.event.inputs.publish_internal == 'true' && env.PLAY_SERVICE_ACCOUNT_JSON != '' }}
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ env.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: ${{ steps.package.outputs.value }}
+          releaseFiles: mobile/build/app/outputs/bundle/${{ github.event.inputs.flavor }}Release/*.aab
+          track: internal
+          status: completed
+
+      - name: Upload apk
+        if: ${{ github.event.inputs.build_apk == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-${{ github.event.inputs.flavor }}-apk
+          path: mobile/build/app/outputs/flutter-apk/*${{ github.event.inputs.flavor }}-release.apk

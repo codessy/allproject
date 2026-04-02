@@ -1,0 +1,28 @@
+name: docker-ci
+
+on:
+  push:
+    paths:
+      - "backend/**"
+      - "infra/**"
+      - ".dockerignore"
+      - ".github/workflows/docker.yml"
+  pull_request:
+    paths:
+      - "backend/**"
+      - "infra/**"
+      - ".dockerignore"
+      - ".github/workflows/docker.yml"
+
+jobs:
+  build-api-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build backend image
+        run: docker build -t walkietalkie-api:ci ./backend
+
+      - name: Validate compose config
+        run: docker compose -f infra/docker-compose.yml config

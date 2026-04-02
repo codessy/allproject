@@ -1,0 +1,20 @@
+# Go
+backend/bin/
+backend/.cache/
+
+# Environment
+.env
+.env.*
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Flutter
+mobile/.dart_tool/
+mobile/build/
+
+# Docker
+postgres_data/

@@ -1,0 +1,9 @@
+backend/api.exe
+backend/bin
+backend/.cache
+backend/.tmp
+mobile/.dart_tool
+mobile/build
+mobile/.packages
+.git
+postgres_data
