@@ -79,7 +79,7 @@ jobs:
           aab_rel="build/app/outputs/bundle/${flavor}Release/app-${flavor}-release.aab"
           apk_rel="build/app/outputs/flutter-apk/app-${flavor}-release.apk"
           if [ -f "$aab_rel" ]; then
-            echo "aab=$aab_rel" >> "$GITHUB_OUTPUT"
+            echo "aab=mobile/$aab_rel" >> "$GITHUB_OUTPUT"
           elif [ -f "mobile/$aab_rel" ]; then
             echo "aab=mobile/$aab_rel" >> "$GITHUB_OUTPUT"
           else
@@ -89,7 +89,7 @@ jobs:
             exit 1
           fi
           if [ -f "$apk_rel" ]; then
-            echo "apk=$apk_rel" >> "$GITHUB_OUTPUT"
+            echo "apk=mobile/$apk_rel" >> "$GITHUB_OUTPUT"
           elif [ -f "mobile/$apk_rel" ]; then
             echo "apk=mobile/$apk_rel" >> "$GITHUB_OUTPUT"
           fi
