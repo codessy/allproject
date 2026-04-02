@@ -15,7 +15,8 @@ function Write-Step([string]$Message) {
 }
 
 $projectRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
-$tempEnv = Join-Path $env:TEMP "walkietalkie-$Flavor-release-env.json"
+$tempRoot = [System.IO.Path]::GetTempPath()
+$tempEnv = Join-Path $tempRoot "walkietalkie-$Flavor-release-env.json"
 
 Write-Step "Writing temporary dart-define file"
 $json = @{
