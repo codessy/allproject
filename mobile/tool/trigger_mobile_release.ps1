@@ -30,11 +30,14 @@ function Initialize-GhCommand {
     if (-not (Test-Path $portableRoot)) {
         New-Item -ItemType Directory -Path $portableRoot | Out-Null
     }
-    if (-not (Test-Path $zipPath)) {
-        Invoke-WebRequest -Uri $downloadUrl -OutFile $zipPath
+    $portableExe = Get-ChildItem -Path $portableRoot -Recurse -Filter gh.exe -ErrorAction SilentlyContinue | Select-Object -First 1
+    if (-not $portableExe) {
+        if (-not (Test-Path $zipPath)) {
+            Invoke-WebRequest -Uri $downloadUrl -OutFile $zipPath
+        }
+        Expand-Archive -Path $zipPath -DestinationPath $portableRoot -Force
+        $portableExe = Get-ChildItem -Path $portableRoot -Recurse -Filter gh.exe | Select-Object -First 1
     }
-    Expand-Archive -Path $zipPath -DestinationPath $portableRoot -Force
-    $portableExe = Get-ChildItem -Path $portableRoot -Recurse -Filter gh.exe | Select-Object -First 1
     if (-not $portableExe) {
         throw "Failed to prepare portable gh executable."
     }
