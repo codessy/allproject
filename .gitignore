@@ -6,6 +6,9 @@ backend/*.exe
 # Environment
 .env
 .env.*
+*walkietalkie-play-*.json
+mobile/android/keystore.properties
+mobile/android/keystore/
 
 # OS / IDE
 .DS_Store

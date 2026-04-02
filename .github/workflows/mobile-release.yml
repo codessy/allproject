@@ -75,7 +75,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: mobile-${{ github.event.inputs.flavor }}-aab
-          path: mobile/build/app/outputs/bundle/${{ github.event.inputs.flavor }}Release/*.aab
+          path: build/app/outputs/bundle/${{ github.event.inputs.flavor }}Release/*.aab
 
       - name: Resolve package name
         id: package
@@ -93,7 +93,7 @@ jobs:
         with:
           serviceAccountJsonPlainText: ${{ env.PLAY_SERVICE_ACCOUNT_JSON }}
           packageName: ${{ steps.package.outputs.value }}
-          releaseFiles: mobile/build/app/outputs/bundle/${{ github.event.inputs.flavor }}Release/*.aab
+          releaseFiles: build/app/outputs/bundle/${{ github.event.inputs.flavor }}Release/*.aab
           track: internal
           status: completed
 
@@ -102,4 +102,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: mobile-${{ github.event.inputs.flavor }}-apk
-          path: mobile/build/app/outputs/flutter-apk/*${{ github.event.inputs.flavor }}-release.apk
+          path: build/app/outputs/flutter-apk/*${{ github.event.inputs.flavor }}-release.apk

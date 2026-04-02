@@ -80,7 +80,7 @@ function Set-GhSecretFile([string]$Name, [string]$Path) {
         throw "File not found for secret '$Name': $Path"
     }
     $content = Get-Content -Raw -Path $Path
-    & $script:GhCommand secret set $Name --repo $Repository --body $content
+    $content | & $script:GhCommand secret set $Name --repo $Repository
     if ($LASTEXITCODE -ne 0) {
         throw "Failed to set secret: $Name"
     }
