@@ -118,7 +118,7 @@ jobs:
           packageName: ${{ steps.package.outputs.value }}
           releaseFiles: ${{ github.workspace }}/${{ steps.artifacts.outputs.aab }}
           track: internal
-          status: completed
+          status: draft
 
       - name: Upload apk
         if: ${{ github.event.inputs.build_apk == 'true' }}
