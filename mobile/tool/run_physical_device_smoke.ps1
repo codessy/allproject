@@ -2,7 +2,7 @@ param(
     [string]$ApiBaseUrl = "http://localhost:8080",
     [string]$DemoEmail = "demo@example.com",
     [string]$DemoPassword = "password",
-    [string]$PackageName = "com.example.walkietalkie_mobile.dev",
+    [string]$PackageName = "com.codessy.walkietalkie.dev",
     [string]$DeviceId = "",
     [switch]$AllowEmulator
 )

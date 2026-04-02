@@ -61,7 +61,7 @@ Optional parameters:
 
 - `-ApiBaseUrl http://localhost:8080`
 - `-DeviceId emulator-5554`
-- `-PackageName com.example.walkietalkie_mobile`
+- `-PackageName com.codessy.walkietalkie`
 - `-ValidateLoggedOutBoundary $true`
 
 ## Physical device smoke
@@ -80,9 +80,9 @@ Use `-AllowEmulator` only when you intentionally want emulator fallback.
 
 Android flavors:
 
-- `dev` -> `com.example.walkietalkie_mobile.dev`
-- `stage` -> `com.example.walkietalkie_mobile.stage`
-- `prod` -> `com.example.walkietalkie_mobile`
+- `dev` -> `com.codessy.walkietalkie.dev`
+- `stage` -> `com.codessy.walkietalkie.stage`
+- `prod` -> `com.codessy.walkietalkie`
 
 Sample runs:
 

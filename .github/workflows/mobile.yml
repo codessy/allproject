@@ -84,8 +84,8 @@ jobs:
           profile: medium_phone
           script: |
             adb install -r mobile/build/app/outputs/flutter-apk/app-dev-debug.apk
-            adb shell am start -n com.example.walkietalkie_mobile.dev/.MainActivity
-            pwsh -File mobile/tool/verify_runtime_invite_deeplink.ps1 -ApiBaseUrl http://localhost:8080 -PackageName com.example.walkietalkie_mobile.dev -DeviceId emulator-5554
+            adb shell am start -n com.codessy.walkietalkie.dev/.MainActivity
+            pwsh -File mobile/tool/verify_runtime_invite_deeplink.ps1 -ApiBaseUrl http://localhost:8080 -PackageName com.codessy.walkietalkie.dev -DeviceId emulator-5554
 
       - name: Stop backend dependencies
         if: always()

@@ -105,9 +105,9 @@ jobs:
         shell: bash
         run: |
           if [ "${{ github.event.inputs.flavor }}" = "stage" ]; then
-            echo "value=com.example.walkietalkie_mobile.stage" >> "$GITHUB_OUTPUT"
+            echo "value=com.codessy.walkietalkie.stage" >> "$GITHUB_OUTPUT"
           else
-            echo "value=com.example.walkietalkie_mobile" >> "$GITHUB_OUTPUT"
+            echo "value=com.codessy.walkietalkie" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Publish to Google Play internal

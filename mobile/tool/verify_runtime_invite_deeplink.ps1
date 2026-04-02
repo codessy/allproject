@@ -2,7 +2,7 @@ param(
     [string]$ApiBaseUrl = "http://localhost:8080",
     [string]$DemoEmail = "demo@example.com",
     [string]$DemoPassword = "password",
-    [string]$PackageName = "com.example.walkietalkie_mobile",
+    [string]$PackageName = "com.codessy.walkietalkie",
     [string]$DeviceId = "",
     [bool]$ValidateLoggedOutBoundary = $true
 )
