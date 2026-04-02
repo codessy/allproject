@@ -116,7 +116,7 @@ jobs:
         with:
           serviceAccountJsonPlainText: ${{ env.PLAY_SERVICE_ACCOUNT_JSON }}
           packageName: ${{ steps.package.outputs.value }}
-          releaseFiles: ${{ steps.artifacts.outputs.aab }}
+          releaseFiles: ${{ github.workspace }}/${{ steps.artifacts.outputs.aab }}
           track: internal
           status: completed
 
