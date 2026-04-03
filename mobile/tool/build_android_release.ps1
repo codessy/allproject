@@ -4,6 +4,7 @@ param(
     [Parameter(Mandatory = $true)]
     [string]$ApiBaseUrl,
     [string]$DevLoopbackHost = "localhost",
+    [int]$BuildNumber = 0,
     [switch]$BuildApk
 )
 
@@ -30,10 +31,15 @@ Write-Step "Building Android appbundle ($Flavor)"
 Push-Location $projectRoot
 try {
     flutter pub get
-    flutter build appbundle --release --flavor $Flavor --dart-define-from-file=$tempEnv
+    $commonArgs = @("--release", "--flavor", $Flavor, "--dart-define-from-file=$tempEnv")
+    if ($BuildNumber -gt 0) {
+        Write-Step "Using build number $BuildNumber"
+        $commonArgs += "--build-number=$BuildNumber"
+    }
+    flutter build appbundle @commonArgs
     if ($BuildApk) {
         Write-Step "Building Android APK ($Flavor)"
-        flutter build apk --release --flavor $Flavor --dart-define-from-file=$tempEnv
+        flutter build apk @commonArgs
     }
 }
 finally {

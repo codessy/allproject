@@ -69,7 +69,8 @@ jobs:
             throw "Missing API base URL secret for flavor '$flavor'."
           }
           $buildApk = [System.Convert]::ToBoolean("${{ github.event.inputs.build_apk }}")
-          pwsh -File .\tool\build_android_release.ps1 -Flavor $flavor -ApiBaseUrl $apiBase -BuildApk:$buildApk
+          $buildNumber = [int]${{ github.run_number }}
+          pwsh -File .\tool\build_android_release.ps1 -Flavor $flavor -ApiBaseUrl $apiBase -BuildNumber $buildNumber -BuildApk:$buildApk
 
       - name: Resolve release artifact paths
         id: artifacts
