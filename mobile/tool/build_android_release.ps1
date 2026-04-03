@@ -20,10 +20,24 @@ $projectRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
 $tempRoot = [System.IO.Path]::GetTempPath()
 $tempEnv = Join-Path $tempRoot "walkietalkie-$Flavor-release-env.json"
 
+$resolvedLoopbackHost = $DevLoopbackHost
+if ([string]::IsNullOrWhiteSpace($resolvedLoopbackHost) -or $resolvedLoopbackHost -eq "localhost") {
+    try {
+        $apiUri = [Uri]$ApiBaseUrl
+        if (-not [string]::IsNullOrWhiteSpace($apiUri.Host) -and $apiUri.Host -ne "localhost") {
+            $resolvedLoopbackHost = $apiUri.Host
+        }
+    } catch {
+        # Keep provided fallback when URL parsing fails.
+    }
+}
+
+Write-Step "Using DEV_LOOPBACK_HOST=$resolvedLoopbackHost"
+
 Write-Step "Writing temporary dart-define file"
 $json = @{
     API_BASE_URL = $ApiBaseUrl
-    DEV_LOOPBACK_HOST = $DevLoopbackHost
+    DEV_LOOPBACK_HOST = $resolvedLoopbackHost
 } | ConvertTo-Json
 Set-Content -Path $tempEnv -Value $json -Encoding UTF8
 
